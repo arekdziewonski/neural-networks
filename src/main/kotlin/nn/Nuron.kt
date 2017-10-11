@@ -39,14 +39,17 @@ data class NeuralNetwork(val inputLayer: Layer, val hiddenLayers: List<Layer>, v
     companion object {
         fun newNetwork(inputsCount: Int, outputsCount: Int, hiddenLayersCount: Int, neuronsPerHiddenLayer: Int): NeuralNetwork {
             val hiddenLayers = arrayListOf<Layer>()
-            hiddenLayers.add(Layer.newHiddenLayer(neuronsPerHiddenLayer, inputsCount,
-                    if (hiddenLayersCount == 1) outputsCount else neuronsPerHiddenLayer))
 
-            for (i in 2 until hiddenLayersCount) {
-                hiddenLayers.add(Layer.newHiddenLayer(neuronsPerHiddenLayer, neuronsPerHiddenLayer, neuronsPerHiddenLayer))
+            for (i in 1..hiddenLayersCount) {
+                if (i == 1) {
+                    hiddenLayers.add(Layer.newHiddenLayer(neuronsPerHiddenLayer, inputsCount,
+                            if (hiddenLayersCount == 1) outputsCount else neuronsPerHiddenLayer))
+                } else if (i == hiddenLayersCount) {
+                    hiddenLayers.add(Layer.newHiddenLayer(neuronsPerHiddenLayer, neuronsPerHiddenLayer, outputsCount))
+                } else {
+                    hiddenLayers.add(Layer.newHiddenLayer(neuronsPerHiddenLayer, neuronsPerHiddenLayer, neuronsPerHiddenLayer))
+                }
             }
-
-            hiddenLayers.add(Layer.newHiddenLayer(neuronsPerHiddenLayer, neuronsPerHiddenLayer, outputsCount))
 
             return NeuralNetwork(Layer.newInputLayer(inputsCount), hiddenLayers, Layer.newOutputLayer(outputsCount))
         }
